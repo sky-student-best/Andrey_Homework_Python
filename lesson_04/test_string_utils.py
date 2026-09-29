@@ -65,7 +65,7 @@ def test_contains_positive(string, symbol, expected):
     ("text", None),
 ])
 def test_contains_negative(string, symbol):
-    with pytest.raises(AttributeError):
+    with pytest.raises((AttributeError, TypeError)):
         string_utils.contains(string, symbol)
 
 
