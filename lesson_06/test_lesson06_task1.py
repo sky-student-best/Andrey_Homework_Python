@@ -7,13 +7,13 @@ def test_dynamic_loading():
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-extensions")
     options.add_argument("--disable-gpu")
-    # Никаких user-data-dir и sandbox
 
     driver = webdriver.Chrome(options=options)
-    wait = WebDriverWait(driver, 60)
+    wait = WebDriverWait(driver, 90)  # Увеличили таймаут, чтобы дать сайту время
 
     try:
-        driver.get("https://the-internet.herokuapp.com/dynamic_loading/1")
+        # Требование: страница /2
+        driver.get("https://the-internet.herokuapp.com/dynamic_loading/2")
         print("Страница запрошена.")
 
         start_button = wait.until(
@@ -21,18 +21,22 @@ def test_dynamic_loading():
         )
         print("Кнопка найдена.")
 
-        # Клик через JS — самый надёжный
+        # Клик через JS — самый надёжный способ
         driver.execute_script("arguments[0].click();", start_button)
         print("Клик выполнен.")
 
-        # ВАЖНО: ждём появления лоадера (он есть всегда, если JS хоть чуть-чуть сработал)
-        loader = wait.until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".example-loader"))
+        # Требование: ждём появления текста в элементе с id="finish"
+        result_element = wait.until(
+            EC.visibility_of_element_located((By.ID, "finish"))
         )
-        assert loader.is_displayed(), "Лоадер должен появиться после клика"
-        print("Лоадер виден — динамика работает.")
 
-        driver.save_screenshot("dynamic_loading_loader.png")
+        actual_text = result_element.text
+        print(f"Найденный текст: '{actual_text}'")
+
+        # Требование: проверяем, что текст равен "Hello World!"
+        assert actual_text == "Hello World!", f"Ожидался 'Hello World!', но было: '{actual_text}'"
+
+        driver.save_screenshot("dynamic_loading_success.png")
         print("Скриншот сохранён.")
 
     except Exception as e:
