@@ -20,7 +20,8 @@ def test_calculator():
         )
         wait = WebDriverWait(driver, 90)
 
-        driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
+        driver.get(
+            "https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
 
         delay_input = wait.until(
             EC.visibility_of_element_located((By.ID, "delay"))
@@ -41,7 +42,9 @@ def test_calculator():
         # Ждём, пока текст станет "15"
         wait.until(lambda d: result_element.text == "15")
 
-        assert result_element.text == "15", f"Ожидался результат 15, но было: {result_element.text}"
+        assert result_element.text == "15", (
+            f"Ожидался результат 15, но было: {result_element.text}"
+        )
 
     finally:
         if driver is not None:

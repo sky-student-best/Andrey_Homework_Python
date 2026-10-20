@@ -16,53 +16,52 @@ def driver():
 
 
 def test_form_validation(driver):
-    wait = WebDriverWait(driver, 20)
-    driver.get("https://bonigarcia.dev/selenium-webdriver-java/data-types.html")
+    wait = WebDriverWait(driver, 15)
+    url = "https://bonigarcia.dev/selenium-webdriver-java/data-types.html"
+    driver.get(url)
 
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "first-name"))
-    ).send_keys("Иван")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "last-name"))
-    ).send_keys("Петров")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "address"))
-    ).send_keys("Ленина, 55")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "city"))
-    ).send_keys("Москва")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "country"))
-    ).send_keys("Россия")
+    fields_to_fill = [
+        ("first-name", "Иван"),
+        ("last-name", "Петров"),
+        ("address", "Ленина, 55"),
+        ("city", "Москва"),
+        ("country", "Россия"),
+        ("e-mail", "test@skypro.com"),
+        ("phone", "+79990000000"),
+        ("job-position", "QA"),
+        ("company", "SkyPro"),
+    ]
+
+    for name, value in fields_to_fill:
+        element = wait.until(
+            EC.visibility_of_element_located((By.NAME, name))
+        )
+        element.send_keys(value)
 
     zip_input = wait.until(
         EC.visibility_of_element_located((By.NAME, "zip-code"))
-    )
+        )
     zip_input.clear()
-
-    email_input = wait.until(
-        EC.visibility_of_element_located((By.NAME, "e-mail"))
-    )
-    email_input.send_keys("test@skypro.com")
-
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "phone"))
-    ).send_keys("+79990000000")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "job-position"))
-    ).send_keys("QA")
-    wait.until(
-        EC.visibility_of_element_located((By.NAME, "company"))
-    ).send_keys("SkyPro")
 
     submit_btn = wait.until(
         EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "input[type='submit'], button[type='submit']")
+            (By.CSS_SELECTOR, "button[type='submit'], input[type='submit']")
         )
     )
     submit_btn.click()
 
+    zip_block = wait.until(
+        EC.presence_of_element_located((By.ID, "zip-code"))
+    )
+    assert "alert-danger" in zip_block.get_attribute("class")
+
+    first_name_block = wait.until(
+        EC.presence_of_element_located((By.ID, "first-name"))
+    )
+    assert "alert-success" in first_name_block.get_attribute("class")
+
     wait.until(lambda d: "data-types-submitted.html" in d.current_url)
+
     body_text = driver.find_element(By.TAG_NAME, "body").text
 
     assert "Иван" in body_text
