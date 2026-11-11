@@ -8,3 +8,8 @@ pycodestyle==2.14.0
 pyflakes==3.4.0
 Pygments==2.21.0
 pytest==9.1.1
+pytest
+selenium
+webdriver-manager
+allure-pytest
+flake8
